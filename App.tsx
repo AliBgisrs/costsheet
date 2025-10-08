@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { MONTHS, INITIAL_BUDGET_DATA, INITIAL_SALARIES } from './constants.ts';
 import type { BudgetItem, MainCategory } from './types.ts';
 import BudgetInputForm from './components/BudgetInputForm.tsx';
@@ -8,9 +8,41 @@ import Header from './components/Header.tsx';
 import CategoryTotals from './components/CategoryTotals.tsx';
 
 const App: React.FC = () => {
-    const [budgetData, setBudgetData] = useState<Record<string, BudgetItem[]>>(INITIAL_BUDGET_DATA);
-    const [salaries, setSalaries] = useState<Record<string, number>>(INITIAL_SALARIES);
+    const [budgetData, setBudgetData] = useState<Record<string, BudgetItem[]>>(() => {
+        const savedData = localStorage.getItem('budgetData');
+        if (savedData) {
+            try {
+                return JSON.parse(savedData);
+            } catch (e) {
+                console.error('Error parsing budgetData from localStorage', e);
+                return INITIAL_BUDGET_DATA;
+            }
+        }
+        return INITIAL_BUDGET_DATA;
+    });
+
+    const [salaries, setSalaries] = useState<Record<string, number>>(() => {
+        const savedSalaries = localStorage.getItem('salaries');
+        if (savedSalaries) {
+            try {
+                return JSON.parse(savedSalaries);
+            } catch (e) {
+                console.error('Error parsing salaries from localStorage', e);
+                return INITIAL_SALARIES;
+            }
+        }
+        return INITIAL_SALARIES;
+    });
+
     const [selectedMonth, setSelectedMonth] = useState<string>(MONTHS[0]);
+
+    useEffect(() => {
+        localStorage.setItem('budgetData', JSON.stringify(budgetData));
+    }, [budgetData]);
+
+    useEffect(() => {
+        localStorage.setItem('salaries', JSON.stringify(salaries));
+    }, [salaries]);
 
     const handleItemChange = (itemId: string, field: 'subCategory' | 'amount', value: string | number) => {
         setBudgetData(prevData => {
