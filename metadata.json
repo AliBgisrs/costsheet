@@ -1,0 +1,5 @@
+{
+  "name": "Interactive Budget Sheet",
+  "description": "A modern budget sheet application to track expenses, debt, savings, and bills. It visualizes your financial data with an interactive pie chart for category breakdowns and a line chart to show spending trends over different months.",
+  "requestFramePermissions": []
+}
